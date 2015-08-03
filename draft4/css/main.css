@@ -9,6 +9,17 @@ textarea.json {
   height: 300px;
 }
 
+.navbar-default {
+  background-color: #C9CCDC;
+}
+.navbar-default .navbar-brand {
+  color: #363188;
+}
+
+.navbar-default .navbar-nav > li > a {
+  color: #727182;
+}
+
 pre.error-value {
   border: 0;
   padding: 0;
