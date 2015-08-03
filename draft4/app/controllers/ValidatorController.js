@@ -92,9 +92,17 @@ app.controller('validatorController', function ($scope, $http, $window) {
 
           var valid = tv4.validate(self.documentObject, this.schemaObject, true, true);
           if (!valid) {
-            self.documentErrors = [ {"message": tv4.error.message, 
-                "field": tv4.error.schemaPath,
-                "value": tv4.error.dataPath}];
+            if (tv4.error) {
+              self.documentErrors = [ {"message": tv4.error.message, 
+                  "field": tv4.error.schemaPath,
+                  "value": tv4.error.dataPath}];
+            }
+            if (tv4.missing.length != 0) {
+              self.documentErrors = [ {"message": "missing remote schema: " + tv4.missing[0], 
+                  "field": "$ref",
+                  "value": tv4.missing[0]
+              }];
+            }
           } else {
             self.documentMessage = "Document conforms to the JSON schema.";
           }
