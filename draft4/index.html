@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>JSON Schema Lint :: JSON Schema Validator</title>
+    <title>JSON Schema Lint :: Observations & Measurements JSON Schema Validator</title>
 
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/main.css" />
@@ -23,19 +23,24 @@
                     <span class="icon-bar"></span>
                 </button>
 
-                <a class="navbar-brand" href="#">JSON Schema Lint</a>
+                <a class="navbar-brand" href="#">JSON Schema Lint for Observations & Measurements</a>
 
             </div>
 
             <div class="collapse navbar-collapse" id="navbar-collapsible-section">
                 <ul class="nav navbar-nav">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Samples <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">O&M examples <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#" ng-click="ctrl.sample('valid')">Sample schema and valid document</a>
-                            </li>
-                            <li><a href="#" ng-click="ctrl.sample('invalid')">Sample schema and <strong>invalid</strong> document</a>
-                            </li>
+                            <li><a href="#" ng-click="ctrl.sample('Observation', 'observation-instance-boolean')">Boolean observation</a></li>
+                            <li><a href="#" ng-click="ctrl.sample('Observation', 'observation-instance-measure')">Measure observation</a></li>
+                            <li><a href="#" ng-click="ctrl.sample('Observation', 'observation-instance-geometry-line-string')">Geometry (line string) observation</a></li>
+                            <li><a href="#" ng-click="ctrl.sample('Observation', 'observation-instance-geometry-polygon')">Geometry (polygon) observation</a></li>
+                            <li><a href="#" ng-click="ctrl.sample('Observation', 'observation-instance-integer')">Count observation</a></li>
+                            <li><a href="#" ng-click="ctrl.sample('Specimen', 'sample-instance-specimen-1')">Specimen example</a></li>
+                            <li><a href="#" ng-click="ctrl.sample('SamplingCollection', 'sample-instance-collection-1')">Sampling collection example</a></li>
+                            <li><a href="#" ng-click="ctrl.sample('SpatialSampling', 'sample-instance-surface-1')">Spatial sampling example</a></li>
+                            <li><a href="#" ng-click="ctrl.sample('invalid')">Sample schema and <strong>invalid</strong> document</a></li>
                         </ul>
                     </li>
                     <li><a href="#" ng-click="ctrl.reset()">Reset</a>
@@ -61,15 +66,12 @@
         <div class="row">
 
             <div class="col-xs-12">
-                <p> JSON Schema Lint is a JSON schema validator to help you write and test of
-                    <a href="https://github.com/json-schema/json-schema">JSON Schemas</a> that conform with the Draft v4 specification.</p>
-                <p>The author/maintainer is <a href="https://gravatar.com/nickcmaynard">Nick Maynard</a>.  Fork <a href="https://github.com/nickcmaynard/jsonschemalint">this project on Github.</a></p>
-                <p>Under the covers, it uses <a href="https://github.com/mafintosh">Mathias Buus's</a> <a href="https://github.com/mafintosh/is-my-json-valid">is-my-json-valid</a> library, passed through <a href="http://browserify.org">Browserify</a> to make it work in the browser.</p>
-                <p>Optionally, you may use schemas and documents in the YAML format.  These documents are parsed with <a href="https://github.com/jeremyfa">J&eacute;r&eacute;my Fairve's</a> <a href="https://github.com/jeremyfa/yaml.js">yaml.js</a> library.</p>
+                <p>This is an adapted version of <a href="https://github.com/nickcmaynard/jsonschemalint">JSON Schema Lint</a> that adds samples and schema for Observations & Measurements JSON schema from <a href="https://github.com/peterataylor/om-json">O&M JSON Schema</a> </p>
+                <p>Adaption by <a href="https://github.com/peterataylor">Peter Taylor</a></p>
+                <p>This version also changes the underlying validator to use <a href="https://github.com/geraintluff/tv4">Tiny Validator v4</a>.  </p>
+                <p>The author/maintainer of JSON Schema Lint is <a href="https://gravatar.com/nickcmaynard">Nick Maynard</a>.  </p>
             </div>
-
         </div>
-
         <div class="row">
 
             <div class="col-xs-12 col-md-6">
@@ -145,26 +147,28 @@
                                 <td ng-bind="error.field"></td>
                                 <td ng-bind="error.message"></td>
                                 <td><pre class="error-value" ng-bind="error.value | json"></pre></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
 
-            </div>
+                      </div>
 
-        </div>
+                    </div>
 
-    </div>
+                  </div>
 
-    <script src="js/is-my-json-valid/is-my-json-valid.min.js"></script>
+                  <script src="js/is-my-json-valid/is-my-json-valid.min.js"></script>
 
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="bower_components/angular/angular.min.js"></script>
-    <script src="bower_components/yaml.js/dist/yaml.js"></script>
+                  <script src="bower_components/jquery/dist/jquery.min.js"></script>
+                  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+                  <script src="bower_components/angular/angular.min.js"></script>
+                  <script src="bower_components/yaml.js/dist/yaml.js"></script>
+                  <script src="bower_components/tv4/tv4.js"></script>
+                  <script src="bower_components/tv4/tv4.async-jquery.js"></script>
 
-    <script src="app/app.js"></script>
-    <script src="app/controllers/ValidatorController.js"></script>
-</body>
+                  <script src="app/app.js"></script>
+                  <script src="app/controllers/ValidatorController.js"></script>
+                </body>
 
-</html>
+              </html>
