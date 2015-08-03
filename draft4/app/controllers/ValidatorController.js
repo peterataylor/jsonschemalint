@@ -99,42 +99,10 @@ app.controller('validatorController', function ($scope, $http, $window) {
             self.documentMessage = "Document conforms to the JSON schema.";
           }
 
-          /*
-          var valid = tv4.validate(self.documentObject, 
-            this.schemaObject, function(isValid, validationError) {
-                if (!isValid) {
-                  self.documentErrors = [ {"message":validationError.message, 
-                      "field": validationError.schemaPath,
-                      "value": validationError.dataPath}];
-                } else {
-                  self.documentMessage = "Document conforms to the JSON schema.";
-                }
-                $scope.$apply();
-          });
-          */
         } catch (e) {
           // Error parsing as JSON
           self.documentErrors = [{message: "Document is invalid JSON. Try http://jsonlint.com to fix it." }];
         }
-
-      // Do validation
-      /*
-       var documentValidator = validator(this.schemaObject, {
-           verbose: true
-       });
-       documentValidator(this.documentObject);
-       console.log(documentValidator.errors)
-       if (documentValidator.errors && documentValidator.errors.length) {
-         this.documentErrors = documentValidator.errors;
-       } else {
-         this.documentMessage = "Document conforms to the JSON schema.";
-       }
-     } catch (e) {
-       // Error parsing as JSON
-       self.documentErrors = [{message: "Document is invalid JSON. Try http://jsonlint.com to fix it." }];
-     }
-
-     console.log("validateDocument");*/
   };
 
   this.validateSchema = function () {
