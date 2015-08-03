@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "http://waterml2.csiro.au/om-json/sampling.json",
+  "title": "Sampling feature",
+  "description": "Feature on which observations may be made, which is intended to be representative of a different (usually larger) feature that is not fully accessible for some reason.",
+  "type": "object",
+  "required": [
+    "id"
+  ],
+  "properties": {
+    "id": {
+      "title": "id",
+      "description": "A unique identifier for the sampling feature",
+      "type": "string"
+    },
+    "sampledFeature": {
+      "$ref": "https://raw.githubusercontent.com/peterataylor/om-json/master/Common.json#/properties/linkOrObject",
+      "title": "sampledFeature",
+      "description": "the feature which the sampling feature was designed to sample"
+    },
+    "relatedObservation": {
+      "type": "array",
+      "items": {
+        "$ref": "https://raw.githubusercontent.com/peterataylor/om-json/master/Common.json#/properties/link"
+      },
+      "title": "relatedObservation",
+      "description": "Observation that uses this sampling feature"
+    },
+    "complex": {
+      "title": "complex",
+      "description": "link to related sampling features",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "role",
+          "relatedSamplingFeature"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "format": "uri"
+          },
+          "relatedSamplingFeature": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      }
+    }
+  }
+}
