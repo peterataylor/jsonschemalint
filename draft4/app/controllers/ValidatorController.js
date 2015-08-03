@@ -4,99 +4,137 @@ var app = angular.module('app', false);
 
 app.controller('validatorController', function ($scope, $http, $window) {
 
-  var validator = $window['isMyJsonValid'];
-  var YAML = $window['YAML'];
+    var validator = $window['isMyJsonValid'];
+    var YAML = $window['YAML'];
+    var tv4 = $window['tv4'];
 
-  var self = this;
+    var self = this;
 
-  // Load the meta-schema
-  $http.get('meta-schema/schema.json').success(function (data) {
-    self.metaSchema = data;
+    // Load the meta-schema
+    $http.get('meta-schema/schema.json').success(function (data) {
+        self.metaSchema = data;
+    });
+
+    $http.get('samples/Common.json').success(function (data) {
+      tv4.addSchema('http://raw.githubusercontent.com/peterataylor/om-json/master/Common.json', data);
   });
 
-  this.reset = function() {
-    self.document = "";
-    self.schema = "";
-  };
-
-  this.sample = function(ref) {
-    console.debug('sample', ref);
-
-    $http.get('samples/' + ref + '.document.json').success(function(data) {
-      self.document = JSON.stringify(data, null, '  ');
-    });
-    $http.get('samples/' + ref + '.schema.json').success(function(data) {
-      self.schema = JSON.stringify(data, null, '  ');
+    $http.get('samples/geometry.json').success(function (data) {
+      tv4.addSchema('http://gist.githubusercontent.com/peterataylor/47bcd797e0ef3ac92341/raw/fb6e7428791e9afa6c8c05c5be1f5a20c8e043c1/geometry.json', data);
     });
 
-  };
+    this.reset = function() {
+      self.document = "";
+      self.schema = "";
+    };
 
-  this.parseMarkup = function(thing) {
-    try {
-      return JSON.parse(thing);
-    } catch (e) {
-      console.log('not json, trying yaml');
-      return YAML.parse(thing);
-    }
-  };
+    this.sample = function(schema, instance) {
+      console.debug('sample', instance + '+' + schema);
+      var repoURL = 'https://raw.githubusercontent.com/peterataylor/om-json/master/';
 
-  this.reformatMarkup = function(thing) {
-    try {
-      return JSON.stringify(JSON.parse(thing), null, '  ');
-    } catch (e) {
-      return YAML.stringify(YAML.parse(thing), 4, 2);
-    }
-  };
+      $http.get(repoURL + instance + '.json').success(function(data) {
+          self.document = JSON.stringify(data, null, '  ');
+      });
+      $http.get(repoURL + schema + '.json').success(function(data) {
+          self.schema = JSON.stringify(data, null, '  ');
+      });
 
-  this.formatDocument = function() {
-    console.debug('formatDocument');
+    };
 
-    try {
-      var documentObject = this.parseMarkup(self.document);
-      this.document = this.reformatMarkup(self.document);
-    } catch (e) {
-      // *shrug*
-    }
-  };
+    this.parseMarkup = function(thing) {
+      try {
+        return JSON.parse(thing);
+      } catch (e) {
+        console.log('not json, trying yaml');
+        return YAML.parse(thing);
+      }
+    };
 
-  this.formatSchema = function() {
-    console.debug('formatSchema');
+    this.reformatMarkup = function(thing) {
+      try {
+        return JSON.stringify(JSON.parse(thing), null, '  ');
+      } catch (e) {
+        return YAML.stringify(YAML.parse(thing), 4, 2);
+      }
+    };
 
-    try {
-      var schemaObject = this.parseMarkup(self.schema);
-      this.schema = this.reformatMarkup(self.schema);
-    } catch (e) {
-      // *shrug*
-    }
-  };
+    this.formatDocument = function() {
+      console.debug('formatDocument');
 
-  this.validateDocument = function () {
-    console.debug("document");
-    self.documentErrors = [];
-    self.documentMessage = "";
+      try {
+        var documentObject = this.parseMarkup(self.document);
+        this.document = this.reformatMarkup(self.document);
+      } catch (e) {
+        // *shrug*
+      }
+    };
 
-    // Parse as JSON
-    try {
-      self.documentObject = this.parseMarkup(self.document);
+    this.formatSchema = function() {
+      console.debug('formatSchema');
+
+      try {
+        var schemaObject = this.parseMarkup(self.schema);
+        this.schema = this.reformatMarkup(self.schema);
+      } catch (e) {
+        // *shrug*
+      }
+    };
+
+    this.validateDocument = function () {
+      
+        console.debug("document");
+        self.documentErrors = [];
+        self.documentMessage = "";
+
+        // Parse as JSON
+        try {
+          self.documentObject = this.parseMarkup(self.document);
+
+          var valid = tv4.validate(self.documentObject, this.schemaObject);
+          if (!valid) {
+            self.documentErrors = [ {"message": tv4.error.message, 
+                "field": tv4.error.schemaPath,
+                "value": tv4.error.dataPath}];
+          } else {
+            self.documentMessage = "Document conforms to the JSON schema.";
+          }
+
+          /*
+          var valid = tv4.validate(self.documentObject, 
+            this.schemaObject, function(isValid, validationError) {
+                if (!isValid) {
+                  self.documentErrors = [ {"message":validationError.message, 
+                      "field": validationError.schemaPath,
+                      "value": validationError.dataPath}];
+                } else {
+                  self.documentMessage = "Document conforms to the JSON schema.";
+                }
+                $scope.$apply();
+          });
+          */
+        } catch (e) {
+          // Error parsing as JSON
+          self.documentErrors = [{message: "Document is invalid JSON. Try http://jsonlint.com to fix it." }];
+        }
 
       // Do validation
-      var documentValidator = validator(this.schemaObject, {
-        verbose: true
-      });
-      documentValidator(this.documentObject);
-      console.log(documentValidator.errors)
-      if (documentValidator.errors && documentValidator.errors.length) {
-        this.documentErrors = documentValidator.errors;
-      } else {
-        this.documentMessage = "Document conforms to the JSON schema.";
-      }
-    } catch (e) {
-      // Error parsing as JSON
-      self.documentErrors = [{message: "Document is invalid JSON. Try http://jsonlint.com to fix it." }];
-    }
+      /*
+       var documentValidator = validator(this.schemaObject, {
+           verbose: true
+       });
+       documentValidator(this.documentObject);
+       console.log(documentValidator.errors)
+       if (documentValidator.errors && documentValidator.errors.length) {
+         this.documentErrors = documentValidator.errors;
+       } else {
+         this.documentMessage = "Document conforms to the JSON schema.";
+       }
+     } catch (e) {
+       // Error parsing as JSON
+       self.documentErrors = [{message: "Document is invalid JSON. Try http://jsonlint.com to fix it." }];
+     }
 
-    console.log("validateDocument");
-
+     console.log("validateDocument");*/
   };
 
   this.validateSchema = function () {
@@ -115,7 +153,7 @@ app.controller('validatorController', function ($scope, $http, $window) {
 
       // Do validation
       var schemaValidator = validator(this.metaSchema, {
-        verbose: true
+          verbose: true
       });
       schemaValidator(this.schemaObject);
       console.log(schemaValidator.errors)
@@ -133,17 +171,17 @@ app.controller('validatorController', function ($scope, $http, $window) {
 
   // Document changes
   $scope.$watch(function () {
-    return self.document;
-  }, function (newValue, oldValue) {
-    self.validateDocument();
+      return self.document;
+    }, function (newValue, oldValue) {
+      self.validateDocument();
   });
 
   // Schema changes
   $scope.$watch(function () {
-    return self.schema;
-  }, function (newValue, oldValue) {
-    self.validateSchema();
-    self.validateDocument();
+      return self.schema;
+    }, function (newValue, oldValue) {
+      self.validateSchema();
+      self.validateDocument();
   });
 
 });
