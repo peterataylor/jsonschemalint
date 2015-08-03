@@ -90,7 +90,7 @@ app.controller('validatorController', function ($scope, $http, $window) {
         try {
           self.documentObject = this.parseMarkup(self.document);
 
-          var valid = tv4.validate(self.documentObject, this.schemaObject);
+          var valid = tv4.validate(self.documentObject, this.schemaObject, true, true);
           if (!valid) {
             self.documentErrors = [ {"message": tv4.error.message, 
                 "field": tv4.error.schemaPath,
