@@ -85,32 +85,30 @@ app.controller('validatorController', function ($scope, $http, $window) {
     };
 
     this.validateDocument = function () {
+        console.debug("document");
+        self.documentErrors = [];
+        self.documentMessage = "";
 
-      console.debug("document");
-      self.documentErrors = [];
-      self.documentMessage = "";
+        // Parse as JSON
+        try {
+          self.documentObject = this.parseMarkup(self.document);
 
-      // Parse as JSON
-      try {
-        self.documentObject = this.parseMarkup(self.document);
-
-        var valid = tv4.validate(self.documentObject, this.schemaObject, true, true);
-        if (!valid) {
-          if (tv4.error) {
-            self.documentErrors = [ {"message": tv4.error.message, 
-                "field": tv4.error.schemaPath,
-                "value": tv4.error.dataPath}];
+          var valid = tv4.validate(self.documentObject, this.schemaObject);
+          if (!valid) {
+            if (tv4.error) {
+              self.documentErrors = [ {"message": tv4.error.message, 
+                  "field": tv4.error.schemaPath,
+                  "value": tv4.error.dataPath}];
+            }
+            if (tv4.missing.length != 0) {
+              self.documentErrors = [ {"message": "missing remote schema: " + tv4.missing[0], 
+                  "field": "$ref",
+                  "value": tv4.missing[0]
+              }];
+            }
+          } else {
+            self.documentMessage = "Document conforms to the JSON schema.";
           }
-          if (tv4.missing.length != 0) {
-            self.documentErrors = [ {"message": "missing remote schema: " + tv4.missing[0], 
-                "field": "$ref",
-                "value": tv4.missing[0]
-            }];
-          }
-        } else {
-          self.documentMessage = "Document conforms to the JSON schema.";
-        }
-
       } catch (e) {
         // Error parsing as JSON
         self.documentErrors = [{message: "Document is invalid JSON. Try http://jsonlint.com to fix it." }];
