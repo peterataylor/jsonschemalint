@@ -26,6 +26,14 @@ app.controller('validatorController', function ($scope, $http, $window) {
     $http.get('http://raw.githubusercontent.com/peterataylor/om-json/master/Sampling.json').success(function (data) {
         tv4.addSchema('http://raw.githubusercontent.com/peterataylor/om-json/master/Sampling.json', data);
     });
+    
+    $http.get('http://raw.githubusercontent.com/peterataylor/om-json/master/TimeseriesMetadata.json').success(function (data) {
+        tv4.addSchema('http://raw.githubusercontent.com/peterataylor/om-json/master/TimeseriesMetadata.json', data);
+    });
+
+    $http.get('http://raw.githubusercontent.com/peterataylor/om-json/master/TimeseriesTVP.json').success(function (data) {
+        tv4.addSchema('http://raw.githubusercontent.com/peterataylor/om-json/master/TimeseriesTVP.json', data);
+    });
 
     $http.get('http://gist.githubusercontent.com/peterataylor/47bcd797e0ef3ac92341/raw/fb6e7428791e9afa6c8c05c5be1f5a20c8e043c1/geometry.json').success(function (data) {
         tv4.addSchema('http://gist.githubusercontent.com/peterataylor/47bcd797e0ef3ac92341/raw/fb6e7428791e9afa6c8c05c5be1f5a20c8e043c1/geometry.json', data);
